@@ -24,7 +24,7 @@ public class RentalServiceTest {
     // успешный сценарий
     @Test
     void testSuccessfulRentalCreation() {
-        Customer customer = new Customer("C-001", "Леонова Полина", "+375299263712");
+        Customer customer = new Customer("C-100", "Леонова Полина", "+375299263712");
         Bicycle bicycle = new Bicycle("B-001", "Giant Escape", Bicycle.STATUS_AVAILABLE);
 
         Rental rental = rentalService.createRental("R1", customer, bicycle);
@@ -40,7 +40,7 @@ public class RentalServiceTest {
     void testRentalThrowsExceptionWhenBicycleIsAlreadyRented() {
         Customer customer1 = new Customer("C-002", "Широков Константин", "+375291112233");
         Customer customer2 = new Customer("C-003", "Витковская Анастасия", "+375336667788");
-        Bicycle bicycle = new Bicycle("B-002", "Trek FX 3", Bicycle.STATUS_AVAILABLE);
+        Bicycle bicycle = new Bicycle("B-002", "Trek New IPPRPO", Bicycle.STATUS_AVAILABLE);
 
         rentalService.createRental("R1", customer1, bicycle);
 
