@@ -63,4 +63,18 @@ public class RentalServiceTest {
 
         assertEquals("Велосипед находится на обслуживании.", exception.getMessage());
     }
+
+    @Test
+    void testRentalContainsCorrectDetails() {
+        Customer customer = new Customer("C-005", "Колыбелкин Дмитрий", "+375298765432");
+        Bicycle bicycle = new Bicycle("B-005", "Individual", Bicycle.STATUS_AVAILABLE);
+
+        Rental rental = rentalService.createRental("R4", customer, bicycle);
+
+        assertAll("Проверка полей аренды",
+            () -> assertEquals("C-005", rental.getCustomer().getId()),
+            () -> assertEquals("Individual", rental.getBicycle().getModel()),
+            () -> assertEquals(Bicycle.STATUS_RENTED, rental.getBicycle().getStatus())
+        );
+    }
 }
