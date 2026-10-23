@@ -55,7 +55,7 @@ public class RentalServiceTest {
     @Test
     void testRentalThrowsExceptionWhenBicycleIsInMaintenance() {
         Customer customer = new Customer("C-004", "Леонович Илья", "+375440011996");
-        Bicycle bicycle = new Bicycle("B-004", "Cannondale Quick", Bicycle.STATUS_IN_MAINTENANCE);
+        Bicycle bicycle = new Bicycle("B-004", "Update for Part4_4", Bicycle.STATUS_IN_MAINTENANCE);
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
             rentalService.createRental("R3", customer, bicycle);
