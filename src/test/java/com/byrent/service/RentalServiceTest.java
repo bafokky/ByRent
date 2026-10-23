@@ -61,6 +61,6 @@ public class RentalServiceTest {
             rentalService.createRental("R3", customer, bicycle);
         });
 
-        assertEquals("ОШИБКА", exception.getMessage());
+        assertEquals("Велосипед находится на обслуживании.", exception.getMessage());
     }
 }
