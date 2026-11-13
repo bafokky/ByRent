@@ -15,8 +15,12 @@ public class Rental {
         this.startTime = LocalDateTime.now();
     }
 
-    public String getId() { return id; }
-    public Customer getCustomer() { return customer; }
-    public Bicycle getBicycle() { return bicycle; }
-    public LocalDateTime getStartTime() { return startTime; }
+    public String getId() {
+         return id; }
+    public Customer getCustomer() {
+         return customer; }
+    public Bicycle getBicycle() {
+     return bicycle; }
+    public LocalDateTime getStartTime() {
+         return startTime; }
 }

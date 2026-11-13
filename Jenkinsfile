@@ -2,9 +2,21 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
         stage('Build') {
             steps {
-                bat 'mvn compile'
+                bat 'mvn clean compile'
+            }
+        }
+
+        stage('Static Analysis') {
+            steps {
+                bat 'mvn checkstyle:check'
             }
         }
 
