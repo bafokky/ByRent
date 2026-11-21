@@ -66,7 +66,8 @@ public class Main {
                 os.write(responseBytes);
             }
         });
-
+        
+        //comm
         server.start(); 
         
         System.out.println("\nServer running");
