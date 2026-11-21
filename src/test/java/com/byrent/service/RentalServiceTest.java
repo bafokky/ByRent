@@ -5,6 +5,9 @@ import com.byrent.model.Customer;
 import com.byrent.model.Rental;
 import com.byrent.repository.InMemoryRentalRepository;
 import com.byrent.repository.RentalRepository;
+
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,10 +22,13 @@ public class RentalServiceTest {
     private RentalRepository rentalRepository;
     private RentalService rentalService;
 
+    private SimpleMeterRegistry registry;
+
     @BeforeEach
     void setUp() {
         rentalRepository = new InMemoryRentalRepository();
-        rentalService = new RentalService(rentalRepository);
+        registry = new SimpleMeterRegistry();
+        rentalService = new RentalService(rentalRepository, registry);
     }
 
     // успешный сценарий
@@ -89,4 +95,30 @@ public class RentalServiceTest {
             () -> assertEquals(Bicycle.STATUS_RENTED, rental.getBicycle().getStatus())
         );
     }
+
+    @Test
+    void testMetricsAreUpdatedOnSuccessAndError() {
+        assertEquals(0.0, registry.counter("application_operations_total").count());
+        assertEquals(0.0, registry.counter("application_operations_success_total").count());
+        assertEquals(0.0, registry.counter("application_operations_error_total").count());
+
+        Customer customer = new Customer("C-006", "Для теста", "+375000000000");
+        Bicycle bicycle = new Bicycle("B-006", "Test bike", Bicycle.STATUS_AVAILABLE);
+
+        rentalService.createRental("R-5", customer, bicycle);
+
+        assertThrows(IllegalStateException.class, () -> {
+            rentalService.createRental("R-6", customer, bicycle);
+        });
+
+        assertEquals(2.0, registry.counter("application_operations_total").count());
+        assertEquals(1.0, registry.counter("application_operations_success_total").count());
+        assertEquals(1.0, registry.counter("application_operations_error_total").count());
+
+        System.out.println("Metrik:");
+        System.out.println("Total: " + registry.counter("application_operations_total").count());
+        System.out.println("Success: " + registry.counter("application_operations_success_total").count());
+        System.out.println("Errors: " + registry.counter("application_operations_error_total").count());
+    }
+
 }
