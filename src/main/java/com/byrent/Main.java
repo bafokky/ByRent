@@ -16,7 +16,11 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
 public class Main {
-    public static void main(String[] args) throws IOException{
+
+    private static final int PORT = 8080;
+    private static final int HTTP_STATUS_OK = 200;
+
+    public static void main(String[] args) throws IOException {
         RentalRepository repository = new InMemoryRentalRepository();
         PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         RentalService rentalService = new RentalService(repository, registry);
@@ -54,13 +58,13 @@ public class Main {
         }
 
         
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/metrics", exchange -> {
             String response = registry.scrape(); 
             
             byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().set("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
-            exchange.sendResponseHeaders(200, responseBytes.length);
+            exchange.sendResponseHeaders(HTTP_STATUS_OK, responseBytes.length);
             
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(responseBytes);

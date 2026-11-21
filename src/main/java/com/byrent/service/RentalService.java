@@ -19,11 +19,17 @@ public class RentalService {
     private final Counter successOperationsCounter;
     private final Counter errorOperationsCounter;
 
+    private final Counter bicycleAlreadyRentedCounter;
+    private final Counter bicycleInMaintenanceCounter;
+
     public RentalService(RentalRepository rentalRepository, MeterRegistry registry) {
         this.rentalRepository = rentalRepository;
         this.totalOperationsCounter = registry.counter("application_operations_total");
         this.successOperationsCounter = registry.counter("application_operations_success_total");
         this.errorOperationsCounter = registry.counter("application_operations_error_total");
+
+        this.bicycleAlreadyRentedCounter = registry.counter("application_errors_bicycle_already_rented_total");
+        this.bicycleInMaintenanceCounter = registry.counter("application_errors_bicycle_in_maintenance_total");
     }
 
     public Rental createRental(String rentalId, Customer customer, Bicycle bicycle) {
@@ -34,10 +40,12 @@ public class RentalService {
         try {
             if (Bicycle.STATUS_RENTED.equals(bicycle.getStatus())) {
                 LOGGER.warn("Declined. Bicycle {} is already rented.", bicycle.getId());
+                bicycleAlreadyRentedCounter.increment();
                 throw new IllegalStateException("Велосипед уже арендован.");
             }
             if (Bicycle.STATUS_IN_MAINTENANCE.equals(bicycle.getStatus())) {
                 LOGGER.warn("Declined. Bicycle {} is undergoing maintenance.", bicycle.getId());
+                bicycleInMaintenanceCounter.increment();
                 throw new IllegalStateException("Велосипед находится на обслуживании.");
             }
 
